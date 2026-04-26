@@ -13,8 +13,10 @@ import static io.restassured.RestAssured.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(classes = StudentManagementApplication.class)
-@AutoConfigureMockMvc
+@SpringBootTest(
+        classes = StudentManagementApplication.class,
+        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+)
 public class StudentIntegrationTest {
 
     @Autowired
