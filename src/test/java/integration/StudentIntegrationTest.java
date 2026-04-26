@@ -27,7 +27,46 @@ public class StudentIntegrationTest {
 
         String username = "testuser";
 
-        mockMvc.perform(get("/student/getAllStudents"))
-                .andExpect(status().isOk());
+        // 1. Create user
+        given()
+                .port(port)
+                .contentType("application/json")
+                .body("""
+                {
+                    "studentname": "John",
+                    "address": "Delhi",
+                    "phone": "9999999999",
+                    "username": "%s",
+                    "password": "pass123"
+                }
+            """.formatted(username))
+                .when()
+                .post("/student/save");
+
+        // 2. Login → get token
+        String token =
+                given()
+                        .port(port)
+                        .contentType("application/json")
+                        .body("""
+                        {
+                          "username": "%s",
+                          "pass": "pass123"
+                        }
+                    """.formatted(username))
+                        .when()
+                        .post("/student/login")
+                        .then()
+                        .extract()
+                        .asString();
+
+        // 3. Call secured API
+        given()
+                .port(port)
+                .header("Authorization", "Bearer " + token)
+                .when()
+                .get("/student/getAllStudents")
+                .then()
+                .statusCode(200);
     }
 }
