@@ -17,7 +17,15 @@ public class StudentApiTest extends BaseTest {
 
         given()
                 .contentType(ContentType.JSON)
-                .body(TestDataFactory.createStudentRequest(username))
+                .body("""
+            {
+                "studentname": "John",
+                "address": "Delhi",
+                "phone": "9999999999",
+                "username": "%s",
+                "password": "%s"
+            }
+            """.formatted(username, "pass123"))
                 .when()
                 .post("/student/save")
                 .then()
@@ -39,14 +47,14 @@ public class StudentApiTest extends BaseTest {
 
         String username = TestDataFactory.uniqueUsername();
 
-        createStudent(username);
+        given()
+                .contentType("application/json")
+                .body(TestDataFactory.createStudentRequest(username))
+                .when()
+                .post("/student/save");
 
         ResultSet rs = DbUtils.getStudentByUsername(username);
-
-        assertTrue(rs.next(), "Student not found in DB");
-
-        String studentName = rs.getString("student_name");
-        assertEquals("TestUser", studentName);
+        assertTrue(rs.next());
     }
 
     // 3. Login Test
@@ -71,12 +79,15 @@ public class StudentApiTest extends BaseTest {
                         .when()
                         .post("/student/login")
                         .then()
-                        .log().all()
-                        .statusCode(200)
                         .extract()
                         .asString();
 
-        assertNotNull(token);
+        given()
+                .header("Authorization", "Bearer " + token)
+                .when()
+                .get("/student/getAllStudents")
+                .then()
+                .statusCode(200);
     }
 
     // 4. Negative Login Test

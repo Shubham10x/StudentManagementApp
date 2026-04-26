@@ -19,7 +19,7 @@ public class DbUtils {
         Connection conn = getConnection();
 
         PreparedStatement ps = conn.prepareStatement(
-                "SELECT * FROM student WHERE user_name = ?" // ⚠️ confirm column
+                "SELECT * FROM student WHERE user_name = ?"
         );
 
         ps.setString(1, username);
