@@ -23,7 +23,9 @@ public class StudentIntegrationTest {
     private int port;
 
     @Test
-    void shouldReturnAllStudents() throws Exception {
+    void shouldReturnAllStudents() {
+
+        String username = "testuser";
 
         mockMvc.perform(get("/student/getAllStudents"))
                 .andExpect(status().isOk());
