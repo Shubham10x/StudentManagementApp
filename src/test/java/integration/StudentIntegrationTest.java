@@ -22,7 +22,6 @@ public class StudentIntegrationTest {
     @LocalServerPort
     private int port;
 
-    @WithMockUser
     @Test
     void shouldReturnAllStudents() throws Exception {
 
